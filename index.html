@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gol en Contra – Formación titular</title>
+  <link rel="icon" href="logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;800&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+  <!-- ===== Encabezado ===== -->
+  <header>
+    <img src="logo.png" alt="Escudo GEC Futbol Club">
+    <div>
+      <h1>Formación titular</h1>
+      <small>Gol en Contra · Liga Universitaria B · Clausura 2026</small>
+    </div>
+    <div class="sp"></div>
+    <button id="login" class="sec"></button>
+  </header>
+
+  <!-- Avisos de conexión -->
+  <div id="msg"></div>
+
+  <!-- ===== Pestañas ===== -->
+  <nav>
+    <button data-t="f" class="on">Formación</button>
+    <button data-t="p">Fixture y posiciones</button>
+  </nav>
+
+  <main>
+
+    <!-- ===== Pestaña: Formación ===== -->
+    <section id="tf">
+      <div class="row">
+
+        <!-- Columna izquierda: esquema y cancha -->
+        <div>
+          <div class="bar" id="ctl">
+            <span>Esquema:</span>
+            <div id="esquemas"></div> <!-- botones generados desde config.js -->
+            <input id="fin" placeholder="ej: 4-1-4-1" aria-label="Esquema manual">
+            <button id="fgo">Aplicar</button>
+          </div>
+
+          <div id="pitch">
+            <div class="box arriba"></div>
+            <div class="box abajo"></div>
+            <!-- las fichas de los titulares se agregan desde app.js -->
+          </div>
+        </div>
+
+        <!-- Columna derecha: próximo partido y suplentes -->
+        <div>
+          <div class="prox" id="prox"></div>
+
+          <div class="card">
+            <h2>Suplentes</h2>
+            <div id="bench"></div>
+            <p class="ayuda">Técnico: arrastrá un suplente sobre un titular (o al revés) para cambiarlos, y tocá un jugador para editar nombre y número.</p>
+            <button class="sec" id="addb">+ Agregar suplente</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===== Pestaña: Fixture y posiciones (se completa desde app.js) ===== -->
+    <section id="tp" hidden></section>
+
+  </main>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
