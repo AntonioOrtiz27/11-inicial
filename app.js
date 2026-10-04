@@ -257,11 +257,23 @@ function alPresionar(e) {
     }
   };
 
-  const alSoltar = ev => {
+  const terminar = () => {
     removeEventListener("pointermove", alMover);
     removeEventListener("pointerup", alSoltar);
+    removeEventListener("pointercancel", alCancelar);
     arrastrando = false;
     if (!esTitular) elemento.remove();
+  };
+
+  // En celulares el sistema puede cortar el gesto (llamada, scroll, etc.):
+  // se descarta el arrastre y la ficha vuelve a su lugar.
+  const alCancelar = () => {
+    terminar();
+    dibujar();
+  };
+
+  const alSoltar = ev => {
+    terminar();
 
     if (!movido) {             // fue un toque, no un arrastre
       editarJugador(esTitular, indice);
@@ -273,6 +285,7 @@ function alPresionar(e) {
 
   addEventListener("pointermove", alMover);
   addEventListener("pointerup", alSoltar);
+  addEventListener("pointercancel", alCancelar);
 }
 
 // Decide qué pasa según dónde se soltó la ficha
