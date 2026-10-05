@@ -66,8 +66,17 @@ const CONFIG = {
   // Resultados ya jugados con los que arranca un tablero nuevo.
   // Formato: "fecha:local-visitante": [goles local, goles visitante]
   RESULTADOS_INICIALES: {
-    "1:4-5": [0, 1],
-    "2:3-4": [0, 7],
-    "3:8-4": [1, 2],
+    "1:1-8": [0, 3],      // DE ZURDA vs F90
+    "1:2-7": [2, 1],      // MALVINAS vs GEOLOGIA
+    "1:3-6": [1, 4],      // TIMBA vs AGRIMENSURA
+    "1:4-5": [0, 1],      // GOL EN CONTRA vs TERCER TIEMPO
+    "2:1-7": [4, 0],      // DE ZURDA vs GEOLOGIA
+    "2:8-6": [3, 1],      // F90 vs AGRIMENSURA
+    "2:2-5": [2, 0],      // MALVINAS vs TERCER TIEMPO
+    "2:3-4": [0, 7],      // TIMBA vs GOL EN CONTRA
+    "3:1-6": [4, 1],      // DE ZURDA vs AGRIMENSURA
+    "3:7-5": [3, 1],      // GEOLOGIA vs TERCER TIEMPO
+    "3:8-4": [1, 2],      // F90 vs GOL EN CONTRA
+    "3:2-3": [6, 0],      // MALVINAS vs TIMBA
   },
 };
