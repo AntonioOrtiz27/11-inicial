@@ -70,10 +70,13 @@ function estadoInicial() {
   return nuevo;
 }
 
-// Completa campos que podrían faltar en datos viejos
+// Completa campos que podrían faltar en datos viejos.
+// Los resultados escritos en config.js SIEMPRE se aplican encima de lo guardado:
+// así, al hacer push a GitHub, todos ven los resultados nuevos aunque tengan
+// una versión vieja guardada en el navegador.
 function completar(datos) {
   datos.B = datos.B || [];
-  datos.R = datos.R || {};
+  datos.R = { ...(datos.R || {}), ...CONFIG.RESULTADOS_INICIALES };
   return datos;
 }
 
@@ -119,7 +122,9 @@ function cargarLocal() {
 
 // Trae la versión de Firebase si es más nueva que la local
 async function traerDelServidor() {
-  if (!CONFIG.DB_URL || arrastrando) return;
+  // No se pisa la pantalla mientras se arrastra o se escribe un resultado
+  const escribiendo = document.activeElement && document.activeElement.matches("#tp input");
+  if (!CONFIG.DB_URL || arrastrando || escribiendo) return;
   try {
     const remoto = await (await fetch(urlTablero())).json();
     if (remoto && remoto.ts > estado.ts) {
@@ -391,8 +396,8 @@ function htmlTabla(zona) {
 function htmlPartido(m) {
   const r = estado.R[m.clave];
   const marcador = esTecnico
-    ? `<input type="number" min="0" data-k="${m.clave}" value="${r ? r[0] : ""}"> -
-       <input type="number" min="0" data-k="${m.clave}" value="${r ? r[1] : ""}">`
+    ? `<input type="number" min="0" inputmode="numeric" data-k="${m.clave}" value="${r ? r[0] : ""}" aria-label="Goles ${nombre(m.local)}"> -
+       <input type="number" min="0" inputmode="numeric" data-k="${m.clave}" value="${r ? r[1] : ""}" aria-label="Goles ${nombre(m.visitante)}">`
     : (r ? `${r[0]} - ${r[1]}` : "vs");
   return `<div class="m ${juegaMiEquipo(m) ? "me" : ""}">
     <span>${nombre(m.local)}</span><span class="sc">${marcador}</span><span>${nombre(m.visitante)}</span>
@@ -412,17 +417,64 @@ function dibujarFixture() {
 
   $("#tp").innerHTML = `
     <div class="card tabla"><h2>Posiciones · Zona A</h2>${htmlTabla(0)}</div>
+    ${htmlPublicar()}
     <p>Al terminar las 7 fechas, los mejores de cada zona juegan la Copa.</p>
     <div class="fx">${fechas}</div>`;
 
   // Carga de resultados (solo técnico)
-  $("#tp").querySelectorAll("input").forEach(campo => campo.onchange = () => {
+  $("#tp").querySelectorAll("input[data-k]").forEach(campo => campo.onchange = () => {
     const clave = campo.dataset.k;
-    const [gl, gv] = [...$("#tp").querySelectorAll(`[data-k="${clave}"]`)].map(x => x.value);
-    if (gl !== "" && gv !== "") estado.R[clave] = [+gl, +gv];
-    else delete estado.R[clave];
+    const [gl, gv] = [...$("#tp").querySelectorAll(`[data-k="${clave}"]`)].map(x => x.value.trim());
+    const goles = v => Math.max(0, parseInt(v, 10) || 0);
+
+    if (gl !== "" && gv !== "") {
+      estado.R[clave] = [goles(gl), goles(gv)];   // los dos marcadores: se guarda
+    } else if (gl === "" && gv === "") {
+      if (!estado.R[clave]) return;
+      delete estado.R[clave];                      // los dos vacíos: se borra el resultado
+    } else {
+      // Falta uno de los dos: se espera SIN redibujar.
+      // (Antes se redibujaba acá y se borraba el número recién escrito.)
+      return;
+    }
     guardar();
   });
+
+  // Copiar resultados para pegarlos en config.js y subirlos a GitHub
+  const copiar = $("#copiarRes");
+  if (copiar) copiar.onclick = async () => {
+    const texto = $("#codigoRes").value;
+    try {
+      await navigator.clipboard.writeText(texto);
+      copiar.textContent = "¡Copiado!";
+    } catch (e) {
+      $("#codigoRes").select();   // sin permiso de portapapeles: queda seleccionado para copiar a mano
+      copiar.textContent = "Copialo a mano (Ctrl+C)";
+    }
+    setTimeout(() => copiar.textContent = "Copiar", 2500);
+  };
+}
+
+// Arma el bloque RESULTADOS_INICIALES listo para pegar en config.js
+function codigoResultados() {
+  const lineas = listaPartidos()
+    .filter(m => estado.R[m.clave])
+    .map(m => {
+      const [gl, gv] = estado.R[m.clave];
+      return `    "${m.clave}": [${gl}, ${gv}],`.padEnd(26) + `// ${nombre(m.local)} vs ${nombre(m.visitante)}`;
+    });
+  return `  RESULTADOS_INICIALES: {\n${lineas.join("\n")}\n  },`;
+}
+
+function htmlPublicar() {
+  if (!esTecnico) return "";
+  return `<details class="card publicar">
+    <summary><b>Publicar resultados en GitHub</b></summary>
+    <p class="ayuda">Copiá este bloque, reemplazá el <code>RESULTADOS_INICIALES</code> de <code>config.js</code> y hacé push.
+    Así todos ven la tabla actualizada aunque no uses Firebase.</p>
+    <textarea id="codigoRes" readonly rows="8">${escaparHTML(codigoResultados())}</textarea>
+    <button id="copiarRes">Copiar</button>
+  </details>`;
 }
 
 
