@@ -389,3 +389,18 @@ html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
     width: min(100%, calc(85dvh * .68));
   }
 }
+
+
+/* ---------- Publicar resultados (solo técnico) ---------- */
+.publicar { max-width: 560px; }
+.publicar summary { cursor: pointer; color: var(--azul); }
+.publicar textarea {
+  width: 100%;
+  font: 12px/1.4 ui-monospace, Consolas, monospace;
+  border: 1px solid var(--azul);
+  border-radius: 6px;
+  padding: 6px;
+  margin: 6px 0;
+  white-space: pre;
+  overflow-x: auto;
+}
