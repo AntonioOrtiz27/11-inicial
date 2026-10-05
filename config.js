@@ -8,7 +8,7 @@ const CONFIG = {
   // ---------- Guardado compartido ----------
   // URL de Firebase Realtime Database (ver README).
   // Si queda vacío, los cambios se guardan solo en este navegador.
-  DB_URL: "",
+  DB_URL: "https://formaciontitular-1b05e-default-rtdb.firebaseio.com",
 
   // Clave del técnico para editar el tablero. ¡Cambiala!
   PIN: "gec2026",
