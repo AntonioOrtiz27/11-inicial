@@ -469,9 +469,7 @@ function codigoResultados() {
 function htmlPublicar() {
   if (!esTecnico) return "";
   return `<details class="card publicar">
-    <summary><b>Publicar resultados en GitHub</b></summary>
-    <p class="ayuda">Copiá este bloque, reemplazá el <code>RESULTADOS_INICIALES</code> de <code>config.js</code> y hacé push.
-    Así todos ven la tabla actualizada aunque no uses Firebase.</p>
+    <summary><b>Copiar y Pegar resultados en Repositorio</b></summary>
     <textarea id="codigoRes" readonly rows="8">${escaparHTML(codigoResultados())}</textarea>
     <button id="copiarRes">Copiar</button>
   </details>`;
